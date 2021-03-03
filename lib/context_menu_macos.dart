@@ -10,6 +10,7 @@ class MacosContextMenuItem extends StatefulWidget with PreferredSizeWidget {
     required this.content,
     this.trailing,
     this.onTap,
+    this.enabled = true,
     double height = 20,
   }) : preferredSize = Size.fromHeight(height);
 
@@ -17,6 +18,7 @@ class MacosContextMenuItem extends StatefulWidget with PreferredSizeWidget {
   final Widget? trailing;
   final void Function()? onTap;
   final Size preferredSize;
+  final bool enabled;
 
   @override
   _MacosContextMenuItemState createState() => _MacosContextMenuItemState();
@@ -32,17 +34,25 @@ class _MacosContextMenuItemState extends State<MacosContextMenuItem> {
 
     return GestureDetector(
       onTapUp: (details) {
-        onTap();
+        if (widget.enabled) {
+          onTap();
+        }
       },
       onSecondaryTapUp: (details) {
-        onTap();
+        if (widget.enabled) {
+          onTap();
+        }
       },
       child: MouseRegion(
         onEnter: (event) {
-          setState(() => isHovering = true);
+          if (widget.enabled) {
+            setState(() => isHovering = true);
+          }
         },
         onExit: (event) {
-          setState(() => isHovering = false);
+          if (widget.enabled) {
+            setState(() => isHovering = false);
+          }
         },
         child: Container(
           decoration: BoxDecoration(
@@ -86,6 +96,10 @@ class _MacosContextMenuItemState extends State<MacosContextMenuItem> {
   }
 
   Color get textColor {
+    if (!widget.enabled) {
+      return CupertinoColors.inactiveGray;
+    }
+
     return isHovering && !isBlinking
         ? CupertinoColors.white
         : CupertinoColors.black;
